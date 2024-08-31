@@ -1,11 +1,12 @@
-import { ContextVariables } from "@/server/types";
-import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { defaultHook, getDefaultSuccessResponse } from "@/utils/server";
-import { RegisterSchema } from "@/validator-schema";
-import { createUser, getUserByEmail } from "@/server/services/user";
-import { HTTPException } from "hono/http-exception";
-import { StatusCodes } from "http-status-codes";
-import { hashPassword } from "@/server/services/auth";
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { HTTPException } from 'hono/http-exception';
+import { StatusCodes } from 'http-status-codes';
+
+import { hashPassword } from '@/server/services/auth';
+import { createUser, getUserByEmail } from '@/server/services/user';
+import { ContextVariables } from '@/server/types';
+import { defaultHook, getDefaultSuccessResponse } from '@/utils/server';
+import { RegisterSchema } from '@/validator-schema';
 
 export const register = new OpenAPIHono<{
   Variables: ContextVariables;
@@ -13,39 +14,39 @@ export const register = new OpenAPIHono<{
   defaultHook,
 }).openapi(
   createRoute({
-    method: "post",
-    path: "/auth/register",
-    tags: ["Auth"],
-    summary: "Register",
+    method: 'post',
+    path: '/auth/register',
+    tags: ['Auth'],
+    summary: 'Register',
     request: {
       body: {
-        description: "Request body",
+        description: 'Request body',
         content: {
-          "application/json": {
-            schema: RegisterSchema.openapi("RegisterSchema"),
+          'application/json': {
+            schema: RegisterSchema,
           },
         },
         required: true,
       },
     },
     responses: {
-      200: getDefaultSuccessResponse(),
+      201: getDefaultSuccessResponse(),
     },
   }),
   async (c) => {
-    const { email, password, username } = c.req.valid("json");
+    const { email, password, username } = c.req.valid('json');
 
     const user = await getUserByEmail(email);
 
     if (user && user.oAuthAccount?.userId) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Tài khoản này đã được liên kết với một tài khoản khác.",
+        message: 'Tài khoản này đã được liên kết với một tài khoản khác.',
       });
     }
 
     if (user) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Tài khoản đã tồn tại",
+        message: 'Tài khoản đã tồn tại',
       });
     }
 
@@ -56,5 +57,13 @@ export const register = new OpenAPIHono<{
       password: hashedPassword,
       username,
     });
+
+    return c.json(
+      {
+        data: newUser,
+        message: 'Đăng ký thành công',
+      },
+      StatusCodes.CREATED,
+    );
   },
 );
