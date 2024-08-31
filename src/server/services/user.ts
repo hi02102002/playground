@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { eq } from "drizzle-orm";
+import { eq } from 'drizzle-orm';
 
-import { DbTransactionType, db } from "@/db";
-import { users } from "@/db/schema";
-import { getAvatar } from "@/utils";
+import { DbTransactionType, db } from '@/db';
+import { users } from '@/db/schema';
+import { getAvatar } from '@/utils';
 
 export const getUserById = async (id: string) => {};
 
@@ -19,10 +19,7 @@ export const getUserByEmail = async (email: string) => {
   return user;
 };
 
-export const createUser = async (
-  data: typeof users.$inferInsert,
-  trx?: DbTransactionType,
-) => {
+export const createUser = async (data: typeof users.$inferInsert, trx?: DbTransactionType) => {
   const _db = trx || db;
 
   const [user] = await _db

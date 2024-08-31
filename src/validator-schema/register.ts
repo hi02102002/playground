@@ -1,5 +1,6 @@
-import { z } from "zod";
-import { EmailSchema, PasswordSchema } from "./shared";
+import { z } from 'zod';
+
+import { EmailSchema, PasswordSchema } from './shared';
 
 export const RegisterSchema = z
   .object({
@@ -8,25 +9,25 @@ export const RegisterSchema = z
     confirmPassword: PasswordSchema,
     username: z
       .string({
-        required_error: "Tên người dùng không được để trống.",
+        required_error: 'Tên người dùng không được để trống.',
       })
-      .min(1, "Tên người dùng không được để trống."),
+      .min(1, 'Tên người dùng không được để trống.'),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (password !== confirmPassword) {
       return ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Mật khẩu không khớp",
-        path: ["confirmPassword"],
+        message: 'Mật khẩu không khớp',
+        path: ['confirmPassword'],
       });
     }
   })
-  .openapi("RegisterSchema", {
+  .openapi('RegisterSchema', {
     example: {
-      email: "exmaple@gmail.com",
-      confirmPassword: "password",
-      password: "password",
-      username: "example",
+      email: 'exmaple@gmail.com',
+      confirmPassword: 'password',
+      password: 'password',
+      username: 'example',
     },
   });
 

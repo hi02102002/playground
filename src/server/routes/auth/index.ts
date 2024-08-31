@@ -1,10 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono } from '@hono/zod-openapi';
 
-import { googleApp } from "./google";
-import { login } from "./login";
+import { googleApp } from './google';
+import { login } from './login';
 
-export const authApp = new OpenAPIHono()
-  .route("/", login)
-  .route("/", googleApp);
+export const authApp = new OpenAPIHono().route('/', login).route('/', googleApp);

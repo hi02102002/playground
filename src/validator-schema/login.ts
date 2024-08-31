@@ -1,15 +1,16 @@
-import { z } from "zod";
-import { EmailSchema, PasswordSchema } from "./shared";
+import { z } from 'zod';
+
+import { EmailSchema, PasswordSchema } from './shared';
 
 export const LoginSchema = z
   .object({
     email: EmailSchema,
     password: PasswordSchema,
   })
-  .openapi("LoginSchema", {
+  .openapi('LoginSchema', {
     example: {
-      email: "exmaple@gmail.com",
-      password: "examplepassword",
+      email: 'exmaple@gmail.com',
+      password: 'examplepassword',
     },
   });
 

@@ -1,9 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { HTTPException } from "hono/http-exception";
-import { StatusCodes } from "http-status-codes";
-import { ZodError } from "zod";
-import { ResponseSchema } from "@/validator-schema";
+import { HTTPException } from 'hono/http-exception';
+import { StatusCodes } from 'http-status-codes';
+import { ZodError } from 'zod';
+
+import { ResponseSchema } from '@/validator-schema';
 
 export const defaultHook = (
   result:
@@ -28,20 +29,20 @@ export const defaultHook = (
 };
 
 export const withAuth = (c: any) => {
-  const user = c.get("user");
+  const user = c.get('user');
 
   if (!user) {
     throw new HTTPException(StatusCodes.UNAUTHORIZED, {
-      message: "Unauthorized",
+      message: 'Unauthorized',
     });
   }
 };
 
 export const getDefaultSuccessResponse = () => ({
-  description: "Success",
+  description: 'Success',
   content: {
-    "application/json": {
-      schema: ResponseSchema.openapi("ResponseSchema"),
+    'application/json': {
+      schema: ResponseSchema.openapi('ResponseSchema'),
     },
   },
 });

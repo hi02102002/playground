@@ -1,6 +1,6 @@
-import type { Session, User } from "lucia";
+import type { Session, User } from 'lucia';
 
-import { DbType } from "@/db";
+import { DbType } from '@/db';
 
 export type ContextVariables = {
   db: DbType;

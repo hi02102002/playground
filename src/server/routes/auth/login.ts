@@ -1,16 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { setCookie } from "hono/cookie";
-import { HTTPException } from "hono/http-exception";
-import { StatusCodes } from "http-status-codes";
+import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { setCookie } from 'hono/cookie';
+import { HTTPException } from 'hono/http-exception';
+import { StatusCodes } from 'http-status-codes';
 
-import { lucia } from "@/lib/lucia";
-import { verifyPassword } from "@/server/services/auth";
-import { getUserByEmail } from "@/server/services/user";
-import { ContextVariables } from "@/server/types";
-import { defaultHook, getDefaultSuccessResponse } from "@/utils/server";
-import { LoginSchema } from "@/validator-schema/login";
+import { lucia } from '@/lib/lucia';
+import { verifyPassword } from '@/server/services/auth';
+import { getUserByEmail } from '@/server/services/user';
+import { ContextVariables } from '@/server/types';
+import { defaultHook, getDefaultSuccessResponse } from '@/utils/server';
+import { LoginSchema } from '@/validator-schema/login';
 
 export const login = new OpenAPIHono<{
   Variables: ContextVariables;
@@ -18,15 +18,15 @@ export const login = new OpenAPIHono<{
   defaultHook,
 }).openapi(
   createRoute({
-    method: "post",
-    path: "/auth/login",
-    tags: ["Auth"],
-    summary: "Login",
+    method: 'post',
+    path: '/auth/login',
+    tags: ['Auth'],
+    summary: 'Login',
     request: {
       body: {
-        description: "Request body",
+        description: 'Request body',
         content: {
-          "application/json": {
+          'application/json': {
             schema: LoginSchema,
           },
         },
@@ -38,25 +38,25 @@ export const login = new OpenAPIHono<{
     },
   }),
   async (c) => {
-    const { email, password } = c.req.valid("json");
+    const { email, password } = c.req.valid('json');
 
     const user = await getUserByEmail(email);
 
     if (!user) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Email không tồn tại.",
+        message: 'Email không tồn tại.',
       });
     }
 
     if (user.oAuthAccount?.userId) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Tài khoản này đã được liên kết với một tài khoản khác.",
+        message: 'Tài khoản này đã được liên kết với một tài khoản khác.',
       });
     }
 
     if (!user.password) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Tài khoản này đã được liên kết với một tài khoản khác.",
+        message: 'Tài khoản này đã được liên kết với một tài khoản khác.',
       });
     }
 
@@ -64,7 +64,7 @@ export const login = new OpenAPIHono<{
 
     if (!isPasswordValid) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: "Mật khẩu không đúng.",
+        message: 'Mật khẩu không đúng.',
       });
     }
 
@@ -74,12 +74,12 @@ export const login = new OpenAPIHono<{
 
     setCookie(c, cookie.name, cookie.value, {
       ...cookie.attributes,
-      sameSite: "Strict",
+      sameSite: 'Strict',
     });
 
     return c.json(
       {
-        message: "Đăng nhập thành công.",
+        message: 'Đăng nhập thành công.',
       },
       StatusCodes.OK,
     );

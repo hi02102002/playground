@@ -1,47 +1,36 @@
-import "server-only";
+import 'server-only';
 
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { getCookie, setCookie, deleteCookie } from "hono/cookie";
-import { ofetch } from "ofetch";
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
+import { ofetch } from 'ofetch';
 
-import { google, lucia } from "@/lib/lucia";
-import {
-  createAccount,
-  getAccountByProviderUserId,
-} from "@/server/services/oauth";
-import { createUser } from "@/server/services/user";
-import { ContextVariables, GoogleUserRes } from "@/server/types";
-import { absoluteUrl } from "@/utils";
-import { db } from "@/db";
+import { db } from '@/db';
+import { google, lucia } from '@/lib/lucia';
+import { createAccount, getAccountByProviderUserId } from '@/server/services/oauth';
+import { createUser } from '@/server/services/user';
+import { ContextVariables, GoogleUserRes } from '@/server/types';
+import { absoluteUrl } from '@/utils';
 
 export const googleCallback = new OpenAPIHono<{
   Variables: ContextVariables;
-}>().get("/auth/google/callback", async (c) => {
-  const code = c.req.query("code")?.toString() ?? null;
-  const state = c.req.query("state")?.toString() ?? null;
-  const redirect = c.req.query("redirect")?.toString() ?? "/";
+}>().get('/auth/google/callback', async (c) => {
+  const code = c.req.query('code')?.toString() ?? null;
+  const state = c.req.query('state')?.toString() ?? null;
+  const redirect = c.req.query('redirect')?.toString() ?? '/';
 
   const storedState = getCookie(c).google_oauth_state ?? null;
 
   const codeVerifier = getCookie(c).google_code_verifier ?? null;
 
-  if (
-    !code ||
-    !state ||
-    !storedState ||
-    state !== storedState ||
-    !codeVerifier
-  ) {
-    return c.redirect(
-      absoluteUrl(`/login?error=${encodeURIComponent("Lỗi xác thực.")}`),
-    );
+  if (!code || !state || !storedState || state !== storedState || !codeVerifier) {
+    return c.redirect(absoluteUrl(`/login?error=${encodeURIComponent('Lỗi xác thực.')}`));
   }
 
   try {
     const tokens = await google.validateAuthorizationCode(code, codeVerifier);
 
     const googleUser = await ofetch<GoogleUserRes>(
-      "https://www.googleapis.com/oauth2/v1/userinfo",
+      'https://www.googleapis.com/oauth2/v1/userinfo',
       {
         headers: {
           Authorization: `Bearer ${tokens.accessToken}`,
@@ -51,18 +40,16 @@ export const googleCallback = new OpenAPIHono<{
 
     if (!googleUser.verified_email) {
       return c.redirect(
-        absoluteUrl(
-          `/login?error=${encodeURIComponent("Email chưa được xác thực.")}`,
-        ),
+        absoluteUrl(`/login?error=${encodeURIComponent('Email chưa được xác thực.')}`),
       );
     }
 
     const account = await getAccountByProviderUserId(googleUser.id);
 
-    if (account && account?.providerId !== "google") {
+    if (account && account?.providerId !== 'google') {
       return c.redirect(
         absoluteUrl(
-          `/login?error=${encodeURIComponent("Tài khoản này đã được liên kết với một tài khoản khác.")}`,
+          `/login?error=${encodeURIComponent('Tài khoản này đã được liên kết với một tài khoản khác.')}`,
         ),
       );
     }
@@ -74,11 +61,11 @@ export const googleCallback = new OpenAPIHono<{
 
       setCookie(c, cookie.name, cookie.value, {
         ...cookie.attributes,
-        sameSite: "Strict",
+        sameSite: 'Strict',
       });
 
-      deleteCookie(c, "google_oauth_state");
-      deleteCookie(c, "google_code_verifier");
+      deleteCookie(c, 'google_oauth_state');
+      deleteCookie(c, 'google_code_verifier');
 
       return c.redirect(redirect);
     }
@@ -96,7 +83,7 @@ export const googleCallback = new OpenAPIHono<{
 
       await createAccount(
         {
-          providerId: "google",
+          providerId: 'google',
           providerUserId: googleUser.id,
           userId: user.id,
         },
@@ -112,18 +99,16 @@ export const googleCallback = new OpenAPIHono<{
 
     setCookie(c, cookie.name, cookie.value, {
       ...cookie.attributes,
-      sameSite: "Strict",
+      sameSite: 'Strict',
     });
 
-    deleteCookie(c, "google_oauth_state");
-    deleteCookie(c, "google_code_verifier");
+    deleteCookie(c, 'google_oauth_state');
+    deleteCookie(c, 'google_code_verifier');
 
     return c.redirect(redirect);
   } catch (error) {
     return c.redirect(
-      absoluteUrl(
-        `/login?error=${encodeURIComponent("Đã có lỗi xảy ra. Vui lòng thử lại.")}`,
-      ),
+      absoluteUrl(`/login?error=${encodeURIComponent('Đã có lỗi xảy ra. Vui lòng thử lại.')}`),
     );
   }
 });
