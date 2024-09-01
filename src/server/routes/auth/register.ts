@@ -1,8 +1,12 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { setCookie } from 'hono/cookie';
 import { HTTPException } from 'hono/http-exception';
 import { StatusCodes } from 'http-status-codes';
 
+import { lucia } from '@/lib/lucia';
 import { hashPassword } from '@/server/services/auth';
+import { generateEmailVerifyToken } from '@/server/services/email-verify-token';
+import { EmailTemplate, sendMail } from '@/server/services/mail';
 import { createUser, getUserByEmail } from '@/server/services/user';
 import { ContextVariables } from '@/server/types';
 import { defaultHook, getDefaultSuccessResponse } from '@/utils/server';
@@ -56,12 +60,29 @@ export const register = new OpenAPIHono<{
       email,
       password: hashedPassword,
       username,
+      emailVerified: false,
+    });
+
+    const verificationCode = await generateEmailVerifyToken(newUser.id);
+
+    await sendMail({
+      to: email,
+      props: {
+        code: verificationCode,
+      },
+      template: EmailTemplate.EmailVerification,
+    });
+
+    const session = await lucia.createSession(newUser.id, {});
+    const sessionCookie = lucia.createSessionCookie(session.id);
+
+    setCookie(c, sessionCookie.name, sessionCookie.value, {
+      ...sessionCookie.attributes,
     });
 
     return c.json(
       {
-        data: newUser,
-        message: 'Đăng ký thành công',
+        message: 'Vui lòng kiểm tra email để xác thực tài khoản.',
       },
       StatusCodes.CREATED,
     );

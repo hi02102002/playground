@@ -16,7 +16,7 @@ export const googleCallback = new OpenAPIHono<{
 }>().get('/auth/google/callback', async (c) => {
   const code = c.req.query('code')?.toString() ?? null;
   const state = c.req.query('state')?.toString() ?? null;
-  const redirect = c.req.query('redirect')?.toString() ?? '/';
+  const redirect = getCookie(c, 'google_oauth_redirect') ?? '/';
 
   const storedState = getCookie(c).google_oauth_state ?? null;
 

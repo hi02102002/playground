@@ -68,6 +68,12 @@ export const login = new OpenAPIHono<{
       });
     }
 
+    if (!user.emailVerified) {
+      throw new HTTPException(StatusCodes.BAD_REQUEST, {
+        message: 'Email chưa được xác thực.',
+      });
+    }
+
     const session = await lucia.createSession(user.id, {});
 
     const cookie = lucia.createSessionCookie(session.id);

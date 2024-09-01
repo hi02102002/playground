@@ -36,6 +36,8 @@ export const withAuth = (c: any) => {
       message: 'Unauthorized',
     });
   }
+
+  return user;
 };
 
 export const getDefaultSuccessResponse = () => ({

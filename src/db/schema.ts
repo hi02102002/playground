@@ -1,15 +1,5 @@
 import { relations } from 'drizzle-orm';
-import {
-  PrimaryKey,
-  boolean,
-  index,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  uniqueIndex,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { boolean, index, pgTable, primaryKey, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_SCHEMA } from './constant';
 
@@ -93,10 +83,8 @@ export const passwordResetTokens = pgTable(
       withTimezone: true,
       mode: 'date',
     }).notNull(),
+    tokenHash: text('token_hash').unique().notNull(),
     ...DEFAULT_SCHEMA,
-    code: varchar('code', {
-      length: 8,
-    }).notNull(),
   },
   (table) => ({
     userIdx: index('password_reset_user_idx').on(table.userId),

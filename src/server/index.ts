@@ -1,10 +1,15 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { apiReference } from '@scalar/hono-api-reference';
+import { compress } from 'hono/compress';
 import { getCookie } from 'hono/cookie';
+import { cors } from 'hono/cors';
 import { csrf } from 'hono/csrf';
 import { HTTPException } from 'hono/http-exception';
+import { logger } from 'hono/logger';
+import { prettyJSON } from 'hono/pretty-json';
 import { StatusCodes } from 'http-status-codes';
 
+import { env } from '@/env.mjs';
 import { lucia } from '@/lib/lucia';
 
 import { authApp, userApp } from './routes';
@@ -12,7 +17,16 @@ import { ContextVariables } from './types';
 
 const app = new OpenAPIHono<{ Variables: ContextVariables }>().basePath('/api');
 
+app.use(compress());
+app.use(prettyJSON());
 app.use(csrf());
+app.use(logger());
+app.use(
+  cors({
+    origin: [env.NEXT_PUBLIC_APP_URL],
+    credentials: true,
+  }),
+);
 
 app.use('*', async (c, next) => {
   const sessionId = getCookie(c, lucia.sessionCookieName) ?? null;
@@ -23,7 +37,6 @@ app.use('*', async (c, next) => {
   }
   const { session, user } = await lucia.validateSession(sessionId);
   if (session && session.fresh) {
-    // use `header()` instead of `setCookie()` to avoid TS errors
     c.header('Set-Cookie', lucia.createSessionCookie(session.id).serialize(), {
       append: true,
     });
@@ -53,6 +66,8 @@ app.get(
 );
 
 app.onError((err, c) => {
+  console.log(err);
+
   if (err instanceof HTTPException) {
     return c.json(
       {

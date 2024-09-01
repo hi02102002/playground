@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-import { EmailSchema, PasswordSchema } from './shared';
+import { ConfirmPasswordSchema, EmailSchema, PasswordSchema } from './shared';
 
 export const RegisterSchema = z
   .object({
     email: EmailSchema,
     password: PasswordSchema,
-    confirmPassword: PasswordSchema,
+    confirmPassword: ConfirmPasswordSchema,
     username: z
       .string({
         required_error: 'Tên người dùng không được để trống.',

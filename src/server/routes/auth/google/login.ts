@@ -50,7 +50,10 @@ export const loginGoogle = new OpenAPIHono<{
       maxAge: 60 * 10,
     });
 
-    url.searchParams.set('redirect', c.req.query('redirect')?.toString() ?? '/');
+    setCookie(c, 'google_oauth_redirect', c.req.query('redirect')?.toString() ?? '/', {
+      secure: env.NODE_ENV === 'production',
+      path: '/',
+    });
 
     return c.redirect(url.toString());
   },

@@ -32,3 +32,19 @@ export const createUser = async (data: typeof users.$inferInsert, trx?: DbTransa
 
   return user;
 };
+
+export const updateUser = async ({
+  data,
+  id,
+  trx,
+}: {
+  id: string;
+  data: Partial<typeof users.$inferInsert>;
+  trx?: DbTransactionType;
+}) => {
+  const _db = trx || db;
+
+  const [user] = await _db.update(users).set(data).where(eq(users.id, id)).returning();
+
+  return user;
+};
