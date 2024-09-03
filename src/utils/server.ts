@@ -2,9 +2,7 @@ import 'server-only';
 
 import { HTTPException } from 'hono/http-exception';
 import { StatusCodes } from 'http-status-codes';
-import { ZodError } from 'zod';
-
-import { ResponseSchema } from '@/validator-schema';
+import { ZodError, z } from 'zod';
 
 export const defaultHook = (
   result:
@@ -40,11 +38,14 @@ export const withAuth = (c: any) => {
   return user;
 };
 
-export const getDefaultSuccessResponse = () => ({
+export const getDefaultSuccessResponse = (data?: z.ZodTypeAny) => ({
   description: 'Success',
   content: {
     'application/json': {
-      schema: ResponseSchema.openapi('ResponseSchema'),
+      schema: z.object({
+        message: z.string().optional(),
+        data: data ?? z.unknown().optional(),
+      }),
     },
   },
 });
