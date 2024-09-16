@@ -83,14 +83,21 @@ FormItem.displayName = 'FormItem';
 
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & {
+    required?: boolean;
+  }
 >(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField();
+  const { formItemId } = useFormField();
 
   return (
     <Label
       ref={ref}
-      className={cn(error && 'text-destructive', className)}
+      className={cn(
+        {
+          "after:content-['*'] after:text-red-500 after:ml-1 after:inline-block": props.required,
+        },
+        className,
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -110,6 +117,7 @@ const FormControl = React.forwardRef<
       id={formItemId}
       aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
       aria-invalid={!!error}
+      data-state={error ? 'invalid' : 'valid'}
       {...props}
     />
   );
@@ -148,7 +156,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn('text-[0.8rem] font-medium text-destructive', className)}
+      className={cn('text-[0.8rem] font-medium text-red-500', className)}
       {...props}
     >
       {body}

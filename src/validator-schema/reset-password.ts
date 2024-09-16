@@ -2,11 +2,9 @@ import { z } from 'zod';
 
 import { ConfirmPasswordSchema, EmailSchema, PasswordSchema } from './shared';
 
-export const SendResetPasswordSchema = z
-  .object({
-    email: EmailSchema,
-  })
-  .openapi('SendResetPasswordSchema');
+export const SendResetPasswordSchema = z.object({
+  email: EmailSchema,
+});
 
 export type SendResetPasswordSchemaType = z.infer<typeof SendResetPasswordSchema>;
 
@@ -22,7 +20,6 @@ export const ResetPasswordSchema = z
         message: 'Mật khẩu không khớp',
       });
     }
-  })
-  .openapi('ResetPasswordSchema');
+  });
 
 export type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;

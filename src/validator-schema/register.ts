@@ -21,14 +21,6 @@ export const RegisterSchema = z
         path: ['confirmPassword'],
       });
     }
-  })
-  .openapi('RegisterSchema', {
-    example: {
-      email: 'exmaple@gmail.com',
-      confirmPassword: 'password',
-      password: 'password',
-      username: 'example',
-    },
   });
 
 export type RegisterSchemaType = z.infer<typeof RegisterSchema>;

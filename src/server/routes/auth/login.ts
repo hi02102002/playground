@@ -9,7 +9,7 @@ import { lucia } from '@/lib/lucia';
 import { verifyPassword } from '@/server/services/auth';
 import { getUserByEmail } from '@/server/services/user';
 import { ContextVariables } from '@/server/types';
-import { defaultHook, getDefaultSuccessResponse } from '@/utils/server';
+import { defaultHook, getBadRequestResponse, getDefaultSuccessResponse } from '@/utils/server';
 import { LoginSchema } from '@/validator-schema/login';
 
 export const login = new OpenAPIHono<{
@@ -35,6 +35,7 @@ export const login = new OpenAPIHono<{
     },
     responses: {
       200: getDefaultSuccessResponse(),
+      400: getBadRequestResponse(),
     },
   }),
   async (c) => {

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const env = createEnv({
   client: {
-    NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_APP_URL: z.any(),
   },
   server: {
     DATABASE_URL: z.string().url(),

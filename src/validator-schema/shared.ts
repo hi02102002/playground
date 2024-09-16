@@ -5,10 +5,7 @@ export const EmailSchema = z
     required_error: 'Email không được để trống.',
   })
   .min(1, 'Email không được để trống.')
-  .email('Email không hợp lệ.')
-  .openapi({
-    example: 'example@mail.com',
-  });
+  .email('Email không hợp lệ.');
 
 export const PasswordSchema = z
   .string({

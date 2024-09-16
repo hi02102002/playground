@@ -5,6 +5,7 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { emailVerification } from './email-verification';
 import { googleApp } from './google';
 import { login } from './login';
+import { logout } from './logout';
 import { register } from './register';
 import { resetPasswordApp } from './reset-password';
 import { sendVerificationAccount } from './send-verification-account';
@@ -15,4 +16,5 @@ export const authApp = new OpenAPIHono()
   .route('/', register)
   .route('/', emailVerification)
   .route('/', sendVerificationAccount)
-  .route('/', resetPasswordApp);
+  .route('/', resetPasswordApp)
+  .route('/', logout);

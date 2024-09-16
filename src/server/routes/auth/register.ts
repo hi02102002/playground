@@ -9,7 +9,7 @@ import { generateEmailVerifyToken } from '@/server/services/email-verify-token';
 import { EmailTemplate, sendMail } from '@/server/services/mail';
 import { createUser, getUserByEmail } from '@/server/services/user';
 import { ContextVariables } from '@/server/types';
-import { defaultHook, getDefaultSuccessResponse } from '@/utils/server';
+import { defaultHook, getBadRequestResponse, getDefaultSuccessResponse } from '@/utils/server';
 import { RegisterSchema } from '@/validator-schema';
 
 export const register = new OpenAPIHono<{
@@ -35,6 +35,7 @@ export const register = new OpenAPIHono<{
     },
     responses: {
       201: getDefaultSuccessResponse(),
+      400: getBadRequestResponse(),
     },
   }),
   async (c) => {
@@ -50,7 +51,7 @@ export const register = new OpenAPIHono<{
 
     if (user) {
       throw new HTTPException(StatusCodes.BAD_REQUEST, {
-        message: 'Tài khoản đã tồn tại',
+        message: 'Tài khoản đã tồn tại.',
       });
     }
 
