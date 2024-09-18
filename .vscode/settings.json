@@ -3,5 +3,6 @@
         "source.removeUnusedImports": "always",
         "source.fixAll.eslint": "always",
         "source.addMissingImports.ts": "always"
-    }
+    },
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

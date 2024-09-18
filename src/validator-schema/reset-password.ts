@@ -18,6 +18,7 @@ export const ResetPasswordSchema = z
       return ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Mật khẩu không khớp',
+        path: ['confirmPassword'],
       });
     }
   });

@@ -11,9 +11,7 @@ export const sendVerificationAccount = new OpenAPIHono<{
   Variables: ContextVariables;
 }>({
   defaultHook,
-});
-
-sendVerificationAccount.openapi(
+}).openapi(
   createRoute({
     method: 'post',
     path: '/auth/send-verification-account',

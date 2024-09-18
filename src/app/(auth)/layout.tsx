@@ -33,9 +33,11 @@ const Layout = async ({ children }: Props) => {
         <div className="h-14 flex items-center absolute px-4 left-0 top-0">
           <Logo />
         </div>
-        <div className="max-w-sm mx-auto w-full ">
-          {children}
-          <div className="text-center mt-6">
+        <div className="max-w-sm mx-auto w-full flex-col h-full flex ">
+          <div className="flex-1 flex items-center justify-center w-full [&>*]:w-full">
+            {children}
+          </div>{' '}
+          <div className="text-center mt-auto">
             <p className="text-xs text-muted-foreground">
               Bằng việc tiếp tục, bạn đồng ý với{' '}
               <Link className="underline text-primary" href="/terms">

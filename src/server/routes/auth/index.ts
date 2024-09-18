@@ -15,6 +15,6 @@ export const authApp = new OpenAPIHono()
   .route('/', googleApp)
   .route('/', register)
   .route('/', emailVerification)
+  .route('/', logout)
   .route('/', sendVerificationAccount)
-  .route('/', resetPasswordApp)
-  .route('/', logout);
+  .route('/', resetPasswordApp);

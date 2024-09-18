@@ -14,7 +14,7 @@ const RegisterPage = () => {
   return (
     <div className="space-y-4">
       <div className="mb-2">
-        <h1 className="mt-8 mb-2 text-2xl lg:text-3xl font-semibold">Tạo tài khoản</h1>
+        <h1 className="mt-8 mb-2 text-3xl font-semibold">Tạo tài khoản</h1>
         <p className="text-sm text-muted-foreground">
           Đăng ký tài khoản để sử dụng dịch vụ của chúng tôi
         </p>

@@ -16,10 +16,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PATHS } from '@/constants';
+import { useRouter } from '@/hooks';
 import { client } from '@/server/client';
 import { LoginSchema, LoginSchemaType } from '@/validator-schema';
 
 export const LoginForm = () => {
+  const router = useRouter();
+
   const form = useForm<LoginSchemaType>({
     defaultValues: {
       email: '',
@@ -40,6 +44,8 @@ export const LoginForm = () => {
     },
     onSuccess: (res) => {
       toast.success(res.message || 'Đăng nhập thành công');
+
+      router.replace(PATHS.HOME);
     },
     onError: (error: any) => {
       toast.error(error?.data?.message || 'Đăng nhập thất bại');
@@ -61,7 +67,11 @@ export const LoginForm = () => {
               <FormItem>
                 <FormLabel required>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="example@gmail.com" />
+                  <Input
+                    {...field}
+                    placeholder="example@gmail.com"
+                    disabled={loginMutation.isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -81,14 +91,19 @@ export const LoginForm = () => {
                   </Link>
                 </div>
                 <FormControl>
-                  <Input {...field} placeholder="••••••••" type="password" />
+                  <Input
+                    {...field}
+                    placeholder="••••••••"
+                    type="password"
+                    disabled={loginMutation.isPending}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             );
           }}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" isLoading={loginMutation.isPending}>
           Đăng nhập
         </Button>
       </form>
