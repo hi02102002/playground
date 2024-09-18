@@ -1,9 +1,11 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { differenceInMinutes } from 'date-fns';
 import { HTTPException } from 'hono/http-exception';
 import { StatusCodes } from 'http-status-codes';
 import { z } from 'zod';
 
 import { lucia } from '@/lib/lucia';
+import redis from '@/lib/redis';
 import { hashPassword } from '@/server/services/auth';
 import { EmailTemplate, sendMail } from '@/server/services/mail';
 import {
@@ -59,6 +61,14 @@ const resetPasswordApp = new OpenAPIHono<{
         });
       }
 
+      const lastSent = await redis?.get(`password-reset:${user.id}`);
+
+      if (lastSent && differenceInMinutes(Date.now(), parseInt(lastSent, 10)) < 1) {
+        throw new HTTPException(StatusCodes.BAD_REQUEST, {
+          message: 'Vui lòng chờ ít nhất 1 phút trước khi gửi lại.',
+        });
+      }
+
       const verificationToken = await createPasswordResetToken(user.id);
 
       const verificationLink = absoluteUrl(`/reset-password/${verificationToken}`);
@@ -70,6 +80,8 @@ const resetPasswordApp = new OpenAPIHono<{
           link: verificationLink,
         },
       });
+
+      await redis?.set(`password-reset:${user.id}`, Date.now(), 'EX', 60);
 
       return c.json(
         {

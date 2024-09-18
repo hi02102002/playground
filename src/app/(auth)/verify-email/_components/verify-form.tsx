@@ -36,9 +36,11 @@ export const VerifyEmailForm = () => {
         json,
       });
 
-      return res;
+      const data = await res.json();
+
+      return data;
     },
-    onSuccess: (res: any) => {
+    onSuccess: (res) => {
       toast.success(res.message || 'Xác thực email thành công.');
 
       router.push(PATHS.DASHBOARD);
@@ -56,6 +58,22 @@ export const VerifyEmailForm = () => {
     },
     onSuccess: () => {
       router.push(PATHS.HOME);
+    },
+  });
+
+  const resendVerificationCodeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await client.api.auth['send-verification-account'].$post();
+
+      const data = await res.json();
+
+      return data;
+    },
+    onSuccess: (res) => {
+      toast.success(res.message || 'Mã xác thực đã được gửi lại.');
+    },
+    onError: (error: any) => {
+      toast.error(error?.data?.message || ERROR_MESSAGE);
     },
   });
 
@@ -94,6 +112,10 @@ export const VerifyEmailForm = () => {
           variant="outline"
           className="w-full"
           disabled={verifyEmailMutation.isPending || logoutMutation.isPending}
+          onClick={() => {
+            resendVerificationCodeMutation.mutate();
+          }}
+          isLoading={resendVerificationCodeMutation.isPending}
         >
           Gửi lại mã xác thực
         </Button>

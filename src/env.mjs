@@ -11,5 +11,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     NODE_ENV: z.enum(['development', 'production', 'test']),
     ENABLED_SEND_MAIL: z.coerce.number().transform((value) => Number(value)),
+    REDIS_URL: z.string().url(),
   },
 });

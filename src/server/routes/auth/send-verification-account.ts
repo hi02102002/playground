@@ -1,7 +1,9 @@
 import { OpenAPIHono, createRoute } from '@hono/zod-openapi';
+import { differenceInMinutes } from 'date-fns';
 import { HTTPException } from 'hono/http-exception';
 import { StatusCodes } from 'http-status-codes';
 
+import redis from '@/lib/redis';
 import { generateEmailVerifyToken } from '@/server/services/email-verify-token';
 import { EmailTemplate, sendMail } from '@/server/services/mail';
 import { ContextVariables } from '@/server/types';
@@ -30,6 +32,14 @@ export const sendVerificationAccount = new OpenAPIHono<{
       });
     }
 
+    const lastSent = await redis?.get(`email-verification:${user.id}`);
+
+    if (lastSent && differenceInMinutes(Date.now(), parseInt(lastSent, 10)) < 1) {
+      throw new HTTPException(StatusCodes.BAD_REQUEST, {
+        message: 'Vui lòng chờ ít nhất 1 phút trước khi gửi lại.',
+      });
+    }
+
     const verificationCode = await generateEmailVerifyToken(user.id);
 
     await sendMail({
@@ -39,6 +49,8 @@ export const sendVerificationAccount = new OpenAPIHono<{
       },
       template: EmailTemplate.EmailVerification,
     });
+
+    await redis?.set(`email-verification:${user.id}`, Date.now(), 'EX', 60);
 
     return c.json(
       {
