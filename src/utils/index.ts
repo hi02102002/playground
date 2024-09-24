@@ -1,3 +1,4 @@
+import { Scene } from '@/data/sets';
 import { env } from '@/env.mjs';
 
 export const absoluteUrl = (path: string) => {
@@ -13,3 +14,10 @@ export function getBaseUrl() {
   if (env.NEXT_PUBLIC_APP_URL.startsWith('localhost')) return `http://${env.NEXT_PUBLIC_APP_URL}`;
   return `https://${env.NEXT_PUBLIC_APP_URL}`;
 }
+
+export const hasSupportDarkOrPixel = (
+  variants: Scene['variants'],
+  darkOrPixel: 'dark' | 'pixel',
+) => {
+  return Object.keys(variants).some((key) => key.includes(darkOrPixel));
+};

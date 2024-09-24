@@ -7,6 +7,7 @@ import { NProgress } from '@/components/n-progress';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/providers';
+import { AppStoreProvider } from '@/store';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -24,13 +25,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <NProgress />
         <Toaster duration={3000} position="top-center" />
-        <Providers>
-          <BgNoise>{children}</BgNoise>
-        </Providers>
+        <AppStoreProvider>
+          <Providers>
+            <BgNoise>{children}</BgNoise>
+          </Providers>
+        </AppStoreProvider>
       </body>
     </html>
   );

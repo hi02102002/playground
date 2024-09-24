@@ -12,7 +12,7 @@ type Props = {
 export const Providers = ({ children }: Props) => {
   return (
     <QueryClientProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         {children}
       </ThemeProvider>
     </QueryClientProvider>

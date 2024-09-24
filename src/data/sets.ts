@@ -120,7 +120,8 @@ export type EffectType =
   | 'white_noise'
   | 'pink_noise'
   | 'brown_noise'
-  | 'plane';
+  | 'plane'
+  | 'rain_window';
 
 export interface SoundEffect {
   type: EffectType;
@@ -128,7 +129,7 @@ export interface SoundEffect {
   url: string;
 }
 
-const effects = [
+export const effects = [
   {
     type: 'fire',
     name: 'Campfire',
@@ -256,15 +257,23 @@ const effects = [
   },
 ] satisfies SoundEffect[];
 
+export const effectsMap = effects.reduce(
+  (acc, effect) => {
+    acc[effect.type] = effect;
+    return acc;
+  },
+  {} as { [key in EffectType]: SoundEffect },
+);
+
 export type SoundTrackMood = 'chill' | 'jazzy' | 'sleepy';
 
-const playlistsBase: { [key in SoundTrackMood]: string[] } = {
+export const playlistsBase: { [key in SoundTrackMood]: string[] } = {
   chill: OGTRACKS_URLS.CHILL,
   jazzy: OGTRACKS_URLS.JAZZY,
   sleepy: OGTRACKS_URLS.SLEEPY,
 };
 
-const playlistsSpotify = {
+export const playlistsSpotify = {
   chill: 'https://open.spotify.com/embed/playlist/0iepisLXvVe5RxB3owHjlj?utm_source=generator',
   jazzy: 'https://open.spotify.com/embed/playlist/4dJSLiR8n2ZQUccpyXYKvE?utm_source=generator',
   sleepy: 'https://open.spotify.com/embed/playlist/1lVoSF8Bd6bQJaoEHFGegX?utm_source=generator',
@@ -875,7 +884,6 @@ export const scenes: { [key in string]: Scene } = {
     },
     thumbnail: spacePW,
     wallpaper: WALLPAPERS_URLS.AM_I_DREAMING.SPACE_WP,
-
     actions: [
       {
         position: [40, 27],
@@ -1758,11 +1766,11 @@ export interface SceneSet {
   thumbnail: string | StaticImageData;
   name: string;
   scenes: Scene[];
-  effects: string[];
+  effects: EffectType[];
   premium?: boolean;
 }
 
-const sets: SceneSet[] = [
+export const sets: SceneSet[] = [
   {
     _id: 'cozy_studio',
     thumbnail: cozyStudioPreview,
