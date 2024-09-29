@@ -1,9 +1,10 @@
 'use client';
 
 import { type ReactNode, createContext, useContext, useRef } from 'react';
+import { useUnmount } from 'usehooks-ts';
 import { type StoreApi, useStore as useZustandStore } from 'zustand';
 
-import { createAppStore, initStore } from './store';
+import { createAppStore, initStore, resetStores } from './store';
 import { Store } from './type';
 
 export const AppStoreContext = createContext<StoreApi<Store> | null>(null);
@@ -15,6 +16,10 @@ export interface AppStoreProviderProps {
 export const AppStoreProvider = ({ children }: AppStoreProviderProps) => {
   const storeRef = useRef<StoreApi<Store>>();
   if (!storeRef.current) storeRef.current = createAppStore(initStore());
+
+  useUnmount(() => {
+    resetStores();
+  });
 
   return <AppStoreContext.Provider value={storeRef.current}>{children}</AppStoreContext.Provider>;
 };

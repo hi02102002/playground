@@ -2,14 +2,14 @@
 
 import { ArrowBendDownLeft, Images } from '@phosphor-icons/react';
 import Image from 'next/image';
-import { title } from 'process';
 import React, { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { SceneSet, sets } from '@/data/sets';
+import { sets } from '@/data/sets';
+import { SceneSet } from '@/data/type';
 import { useStore } from '@/store';
 
 export const ScenesBtn = () => {
@@ -17,7 +17,7 @@ export const ScenesBtn = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [open, setOpen] = React.useState(false);
 
-  const { setCurrentScene, setEffects } = useStore((state) => {
+  const { setCurrentScene, setEffects, currentScene } = useStore((state) => {
     return {
       ...state,
     };
@@ -44,7 +44,7 @@ export const ScenesBtn = () => {
             </TooltipTrigger>
           </PopoverTrigger>
           <TooltipContent className="bg-blur text-primary" sideOffset={10}>
-            <p>{title}</p>
+            <p>Scenes</p>
           </TooltipContent>
         </Tooltip>
         <PopoverContent
@@ -75,7 +75,7 @@ export const ScenesBtn = () => {
                     return (
                       <CarouselItem key={index} className="basis-1/5">
                         <div
-                          className="flex items-center justify-center rounded-md relative aspect-[360/200] cursor-pointer overflow-hidden"
+                          className="flex items-center justify-center rounded-md relative aspect-[360/200] cursor-pointer overflow-hidden h-[200px]"
                           onClick={() => {
                             setCurrentScene(scene);
                             setEffects(currentSet.effects);
@@ -98,6 +98,7 @@ export const ScenesBtn = () => {
                                 ? scene.thumbnail
                                 : scene.thumbnail.src
                             }
+                            priority
                           />
                         </div>
                       </CarouselItem>
@@ -107,7 +108,7 @@ export const ScenesBtn = () => {
                     return (
                       <CarouselItem key={set._id} className="basis-1/5">
                         <div
-                          className="flex items-center justify-center rounded-md relative aspect-[360/200] cursor-pointer"
+                          className="flex items-center justify-center rounded-md relative aspect-[360/200] cursor-pointer h-[200px]"
                           onClick={() => {
                             setCurrentSet(set);
                           }}
@@ -117,6 +118,13 @@ export const ScenesBtn = () => {
                             alt={set.name}
                             fill
                             className="w-full h-full object-cover"
+                            priority
+                            placeholder="blur"
+                            blurDataURL={
+                              typeof set.thumbnail === 'string'
+                                ? set.thumbnail
+                                : set.thumbnail.blurDataURL || set.thumbnail.src
+                            }
                           />
                         </div>
                       </CarouselItem>

@@ -199,8 +199,8 @@ export const SCENES = {
     BED_STARRY_NIGHT: getMediaUrl('scenes/chill-vibes/bed-starry-night.mp4'),
     LIVING_DAY: getMediaUrl('scenes/chill-vibes/living-day.mp4'),
     LIVING_RAINY_DAY: getMediaUrl('scenes/chill-vibes/living-rainy-day.mp4'),
-    LIVING_RAINY_NIGHT: getMediaUrl('scenes/chill-vibes/living-rainy-night.mp4'),
-    LIVING_STARRY_NIGHT: getMediaUrl('scenes/chill-vibes/living-starry-night.mp4'),
+    LIVING_RAINY_NIGHT: getMediaUrl('scenes/chill-vibes/lving-rainy-night.mp4'),
+    LIVING_STARRY_NIGHT: getMediaUrl('scenes/chill-vibes/living-strarry-night.mp4'),
   },
   COTTAGE: {
     EXTERIOR_FINAL: getMediaUrl('scenes/cottage/cottage-exterior-final.mp4'),
@@ -351,7 +351,7 @@ export const SCENES = {
   },
   SUNSET_CAMPING: {
     SUNNY: getMediaUrl('scenes/sunset-camping/Sunny.mp4'),
-    RAINY: getMediaUrl('scenes/sunset-camping/Rainy.mp4'),
+    RAINY: getMediaUrl('scenes/sunset-camping/rainy.mp4'),
   },
   TOKYO_NIGHT: {
     ALLEY_RAIN: getMediaUrl('scenes/tokyo-night/Alley-Rain.mp4'),
@@ -383,6 +383,6 @@ export const SCENES = {
   },
   WINTERNIGHT: {
     WINTERNIGHT: getMediaUrl('scenes/winternight/winternight.mp4'),
-    WINTERNIGHT_BLIZZARD: getMediaUrl('scenes/winternight/winternight-blizzard.mp4'),
+    WINTERNIGHT_BLIZZARD: getMediaUrl('scenes/winternight/winternight_blizzard.mp4'),
   },
 };

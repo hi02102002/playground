@@ -5,44 +5,68 @@ import {
   Images,
   Nut,
   Pause,
+  Play,
   SkipBack,
   SkipForward,
   Sliders,
   SpeakerHigh,
   SpeakerX,
 } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import { pick } from 'ramda';
 import { Fragment, useMemo } from 'react';
+import { useEventListener } from 'usehooks-ts';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useStore } from '@/store';
 
+import { MixBtn } from './mix-btn';
 import { ScenesBtn } from './scenes-btn';
 
-type Props = {};
+const Toolbar = () => {
+  const router = useRouter();
+  const { isMuted, isPlaying, nextTrack, prevTrack, togglePlay, toggleMute, muteAllEffects } =
+    useStore((state) =>
+      pick(
+        [
+          'isPlaying',
+          'isMuted',
+          'nextTrack',
+          'prevTrack',
+          'togglePlay',
+          'toggleMute',
+          'muteAllEffects',
+        ],
+        state,
+      ),
+    );
 
-const Toolbar = (props: Props) => {
   const buttons = useMemo(() => {
     return [
       {
         icon: SkipBack,
         tooltip: 'Bài trước',
+        onClick: prevTrack,
       },
       {
-        icon: Pause,
-        tooltip: 'Dừng',
+        icon: isPlaying ? Pause : Play,
+        tooltip: isPlaying ? 'Tạm dừng' : 'Phát',
+        onClick: togglePlay,
       },
       {
         icon: SkipForward,
         tooltip: 'Bài tiếp theo',
+        onClick: nextTrack,
       },
       {
-        icon: SpeakerHigh,
-        tooltip: 'Tăng âm lượng',
-      },
-      {
-        icon: SpeakerX,
-        tooltip: 'Tắt âm',
+        icon: isMuted ? SpeakerX : SpeakerHigh,
+        tooltip: isMuted ? 'Bật âm thanh' : 'Tắt âm thanh',
+        onClick: () => {
+          toggleMute();
+          muteAllEffects();
+        },
       },
       {
         separator: true,
@@ -50,6 +74,9 @@ const Toolbar = (props: Props) => {
       {
         icon: Sliders,
         tooltip: 'Mix',
+        render: () => {
+          return <MixBtn />;
+        },
       },
       {
         icon: Images,
@@ -61,6 +88,9 @@ const Toolbar = (props: Props) => {
       {
         icon: Nut,
         tooltip: 'Cài đặt',
+        onClick: () => {
+          router.push('/login');
+        },
       },
       {
         separator: true,
@@ -70,7 +100,32 @@ const Toolbar = (props: Props) => {
         tooltip: 'Toàn màn hình',
       },
     ];
-  }, []);
+  }, [isMuted, isPlaying, muteAllEffects, nextTrack, prevTrack, toggleMute, togglePlay]);
+
+  const handleKeydown = (e: KeyboardEvent) => {
+    console.log(e.code);
+    if (e.code === 'Space') {
+      e.preventDefault();
+      togglePlay();
+    }
+
+    if (e.code === 'ArrowRight') {
+      e.preventDefault();
+      nextTrack();
+    }
+
+    if (e.code === 'ArrowLeft') {
+      e.preventDefault();
+      prevTrack();
+    }
+
+    if (e.code === 'KeyM') {
+      toggleMute();
+      muteAllEffects();
+    }
+  };
+
+  useEventListener('keydown', handleKeydown);
 
   return (
     <div className="fixed z-[100] bottom-4 w-full px-4 flex items-center justify-center">
@@ -88,7 +143,12 @@ const Toolbar = (props: Props) => {
             <TooltipProvider key={index}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="blur" size="icon-sm" className="[&>svg]:size-5">
+                  <Button
+                    variant="blur"
+                    size="icon-sm"
+                    className="[&>svg]:size-5"
+                    onClick={'onClick' in button ? button.onClick : undefined}
+                  >
                     <button.icon />
                   </Button>
                 </TooltipTrigger>

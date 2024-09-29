@@ -94,40 +94,7 @@ import {
   winterNight,
   winterNightPreview,
 } from './thumbnails';
-
-export type EffectType =
-  | 'fire'
-  | 'forest'
-  | 'rain_forest'
-  | 'waves'
-  | 'fan'
-  | 'city'
-  | 'storm'
-  | 'rain_street'
-  | 'river'
-  | 'birds'
-  | 'people'
-  | 'wind'
-  | 'ocean'
-  | 'fireplace'
-  | 'snow'
-  | 'keyboard'
-  | 'underwater'
-  | 'space'
-  | 'window_rain'
-  | 'train_noise'
-  | 'thunders'
-  | 'white_noise'
-  | 'pink_noise'
-  | 'brown_noise'
-  | 'plane'
-  | 'rain_window';
-
-export interface SoundEffect {
-  type: EffectType;
-  name: string;
-  url: string;
-}
+import { EffectType, SceneSet, SoundEffect, SoundTrackMood } from './type';
 
 export const effects = [
   {
@@ -264,8 +231,6 @@ export const effectsMap = effects.reduce(
   },
   {} as { [key in EffectType]: SoundEffect },
 );
-
-export type SoundTrackMood = 'chill' | 'jazzy' | 'sleepy';
 
 export const playlistsBase: { [key in SoundTrackMood]: string[] } = {
   chill: OGTRACKS_URLS.CHILL,
@@ -1126,12 +1091,12 @@ export const scenes: { [key in string]: Scene } = {
     wallpaper: WALLPAPERS_URLS.SEOUL.OUTDOOR,
 
     actions: [
-      {
-        position: [36, 28],
-        title: 'City Rain',
-        type: 'sound',
-        effect: 'rain_street',
-      },
+      // {
+      //   position: [36, 28],
+      //   title: 'City Rain',
+      //   type: 'sound',
+      //   effect: 'rain_street',
+      // },
       {
         position: [85, 70],
         title: 'City Traffic',
@@ -1760,15 +1725,6 @@ export const scenes: { [key in string]: Scene } = {
     ],
   },
 } as const;
-
-export interface SceneSet {
-  _id: string;
-  thumbnail: string | StaticImageData;
-  name: string;
-  scenes: Scene[];
-  effects: EffectType[];
-  premium?: boolean;
-}
 
 export const sets: SceneSet[] = [
   {

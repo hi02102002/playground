@@ -1,6 +1,7 @@
 import { StateCreator } from 'zustand';
 
-import { EffectType, SoundEffect, effectsMap, scenes } from '@/data/sets';
+import { effectsMap, scenes } from '@/data/sets';
+import { EffectType, SoundEffect } from '@/data/type';
 
 import { Store } from '../type';
 
@@ -16,8 +17,9 @@ export type EffectsState = {
 export type EffectsActions = {
   addEffect: (effect: EffectWithVolume) => void;
   removeEffect: (effect: EffectWithVolume) => void;
-  setEffectVolume: (effect: EffectWithVolume, volume: number) => void;
+  setEffectVolume: (effect: SoundEffect, volume: number) => void;
   setEffects: (keys: Array<EffectType>) => void;
+  muteAllEffects: () => void;
 };
 
 export type EffectsSlice = EffectsState & EffectsActions;
@@ -44,45 +46,89 @@ export const effectsInitialState: EffectsState = {
     .filter((effect) => effect.name),
 };
 
-export const createEffectsSlice: StateCreator<Store, [], [], EffectsSlice> = (set) => ({
-  ...effectsInitialState,
-  addEffect: (effect: EffectWithVolume) => {
-    set((state) => ({
-      ...state,
-      effects: [
-        ...state.effects,
-        {
-          ...effect,
-          volume: 1,
-          isActive: true,
-        },
-      ],
-    }));
-  },
-  removeEffect: (effect: EffectWithVolume) => {
-    set((state) => ({
-      ...state,
-      effects: state.effects.filter((e) => e.type !== effect.type),
-    }));
-  },
-  setEffectVolume: (effect: EffectWithVolume, volume: number) => {
-    set((state) => ({
-      ...state,
-      effects: state.effects.map((e) => (e.type === effect.type ? { ...e, volume } : e)),
-    }));
-  },
-  setEffects: (keys: Array<EffectType>) => {
-    set((state) => {
-      return {
+export const createEffectsSlice: StateCreator<Store, [], [], EffectsSlice> = (set) => {
+  return {
+    ...effectsInitialState,
+    addEffect: (effect: EffectWithVolume) => {
+      set((state) => ({
         ...state,
-        effects: keys.map((key) => {
+        effects: [
+          ...state.effects,
+          {
+            ...effect,
+            volume: 1,
+            isActive: true,
+          },
+        ],
+      }));
+    },
+    removeEffect: (effect: EffectWithVolume) => {
+      set((state) => ({
+        ...state,
+        effects: state.effects.filter((e) => e.type !== effect.type),
+      }));
+    },
+    setEffectVolume: (effect: SoundEffect, volume: number) => {
+      set((state) => {
+        const existingEffect = state.effects.find((e) => e.type === effect.type);
+
+        if (!existingEffect) {
           return {
-            ...effectsMap[key],
-            volume: 0,
-            isActive: false,
+            ...state,
+            effects: [
+              ...state.effects,
+              {
+                ...effect,
+                volume,
+                isActive: volume > 0,
+              },
+            ],
           };
-        }),
-      };
-    });
-  },
-});
+        }
+
+        return {
+          ...state,
+          effects: state.effects.map((e) => {
+            if (e.type === effect.type) {
+              return {
+                ...e,
+                volume,
+                isActive: volume > 0,
+              };
+            }
+
+            return e;
+          }),
+        };
+      });
+    },
+    setEffects: (keys: Array<EffectType>) => {
+      set((state) => {
+        return {
+          ...state,
+          effects: keys.map((key) => {
+            return {
+              ...effectsMap[key],
+              volume: 0,
+              isActive: false,
+            };
+          }),
+        };
+      });
+    },
+    muteAllEffects: () => {
+      set((state) => {
+        return {
+          ...state,
+          effects: state.effects.map((effect) => ({ ...effect, volume: 0 })),
+        };
+      });
+    },
+    reset: () => {
+      set({
+        ...effectsInitialState,
+        effects: effectsInitialState.effects.map((effect) => ({ ...effect, isActive: false })),
+      });
+    },
+  };
+};

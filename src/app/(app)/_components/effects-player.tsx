@@ -16,7 +16,7 @@ export const EffectsPlayer = () => {
           <ReactPlayer
             key={effect.type}
             url={effect.url}
-            playing={effect.volume > 0}
+            playing={effect.isActive}
             volume={effect.volume}
             loop={true}
             width="0"
