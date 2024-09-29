@@ -120,7 +120,6 @@ const Toolbar = () => {
 
     if (e.code === 'KeyM') {
       toggleMute();
-      muteAllEffects();
     }
   };
 
