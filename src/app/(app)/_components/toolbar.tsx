@@ -27,7 +27,7 @@ import { ScenesBtn } from './scenes-btn';
 
 const Toolbar = () => {
   const router = useRouter();
-  const { isMuted, isPlaying, nextTrack, prevTrack, togglePlay, toggleMute, muteAllEffects } =
+  const { isMuted, isPlaying, nextTrack, prevTrack, togglePlay, toggleMute, inActiveAllEffects } =
     useStore((state) =>
       pick(
         [
@@ -37,7 +37,7 @@ const Toolbar = () => {
           'prevTrack',
           'togglePlay',
           'toggleMute',
-          'muteAllEffects',
+          'inActiveAllEffects',
         ],
         state,
       ),
@@ -65,7 +65,6 @@ const Toolbar = () => {
         tooltip: isMuted ? 'Bật âm thanh' : 'Tắt âm thanh',
         onClick: () => {
           toggleMute();
-          muteAllEffects();
         },
       },
       {
@@ -100,7 +99,7 @@ const Toolbar = () => {
         tooltip: 'Toàn màn hình',
       },
     ];
-  }, [isMuted, isPlaying, muteAllEffects, nextTrack, prevTrack, toggleMute, togglePlay]);
+  }, [isMuted, isPlaying, inActiveAllEffects, nextTrack, prevTrack, toggleMute, togglePlay]);
 
   const handleKeydown = (e: KeyboardEvent) => {
     console.log(e.code);

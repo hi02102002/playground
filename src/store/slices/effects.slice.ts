@@ -19,7 +19,8 @@ export type EffectsActions = {
   removeEffect: (effect: EffectWithVolume) => void;
   setEffectVolume: (effect: SoundEffect, volume: number) => void;
   setEffects: (keys: Array<EffectType>) => void;
-  muteAllEffects: () => void;
+  toggleEffect: (type: EffectType) => void;
+  inActiveAllEffects: () => void;
 };
 
 export type EffectsSlice = EffectsState & EffectsActions;
@@ -30,7 +31,7 @@ export const effectsInitialState: EffectsState = {
       if ('effect' in action) {
         return {
           ...effectsMap[action.effect],
-          volume: 1,
+          volume: 0.5,
           isActive: false,
         };
       }
@@ -56,7 +57,7 @@ export const createEffectsSlice: StateCreator<Store, [], [], EffectsSlice> = (se
           ...state.effects,
           {
             ...effect,
-            volume: 1,
+            volume: 0.5,
             isActive: true,
           },
         ],
@@ -109,18 +110,10 @@ export const createEffectsSlice: StateCreator<Store, [], [], EffectsSlice> = (se
           effects: keys.map((key) => {
             return {
               ...effectsMap[key],
-              volume: 0,
+              volume: 0.5,
               isActive: false,
             };
           }),
-        };
-      });
-    },
-    muteAllEffects: () => {
-      set((state) => {
-        return {
-          ...state,
-          effects: state.effects.map((effect) => ({ ...effect, volume: 0 })),
         };
       });
     },
@@ -128,6 +121,32 @@ export const createEffectsSlice: StateCreator<Store, [], [], EffectsSlice> = (se
       set({
         ...effectsInitialState,
         effects: effectsInitialState.effects.map((effect) => ({ ...effect, isActive: false })),
+      });
+    },
+    toggleEffect(type) {
+      set((state) => {
+        return {
+          ...state,
+          effects: state.effects.map((e) => {
+            if (e.type === type) {
+              return {
+                ...e,
+                isActive: !e.isActive,
+                volume: e.volume > 0 ? e.volume : 0.5,
+              };
+            }
+
+            return e;
+          }),
+        };
+      });
+    },
+    inActiveAllEffects: () => {
+      set((state) => {
+        return {
+          ...state,
+          effects: state.effects.map((e) => ({ ...e, isActive: false })),
+        };
       });
     },
   };

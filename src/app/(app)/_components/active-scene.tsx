@@ -12,10 +12,10 @@ import { EffectsPlayer } from './effects-player';
 import { TrackPlayer } from './track-player';
 
 export const ActiveScene = () => {
-  const { currentScene, effects, setEffectVolume } = useStore((state) => ({
+  const { currentScene, effects, toggleEffect } = useStore((state) => ({
     currentScene: state.currentScene,
     effects: state.effects,
-    setEffectVolume: state.setEffectVolume,
+    toggleEffect: state.toggleEffect,
   }));
 
   const currentVariant = useMemo(() => {
@@ -52,7 +52,7 @@ export const ActiveScene = () => {
 
     if (!effect) return;
 
-    setEffectVolume(effect, effect.volume === 0 ? 0.5 : 0);
+    toggleEffect(type);
   };
 
   return (

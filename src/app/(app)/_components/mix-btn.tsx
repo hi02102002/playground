@@ -92,7 +92,11 @@ export const MixBtn = () => {
           </CarWithTitle>
           <CarWithTitle title="Âm lượng" leftIcon={<Equalizer className="size-6" />}>
             <div className="flex items-center gap-3">
-              <button>
+              <button
+                onClick={() => {
+                  setVolume(0);
+                }}
+              >
                 <SpeakerX className="size-6" weight="fill" />
               </button>
               <Slider
@@ -107,7 +111,11 @@ export const MixBtn = () => {
                 min={0}
                 step={0.1}
               />
-              <button>
+              <button
+                onClick={() => {
+                  setVolume(1);
+                }}
+              >
                 <SpeakerHigh className="size-6" weight="fill" />
               </button>
             </div>
