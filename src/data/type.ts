@@ -34,7 +34,7 @@ export interface SoundEffect {
   url: string;
 }
 
-export type SoundTrackMood = 'chill' | 'jazzy' | 'sleepy';
+export type SoundTrackMood = 'chill' | 'jazzy' | 'sleepy' | 'utube';
 
 export interface Scene {
   thumbnail: string | StaticImageData;

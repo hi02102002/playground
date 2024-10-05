@@ -1,3 +1,7 @@
+import { getVideoUtubeUrl } from '@/utils';
+
+import { UTUBE } from './utube';
+
 export const BASE_URL =
   'https://firebasestorage.googleapis.com/v0/b/share-music-91d8a.appspot.com/o/';
 
@@ -127,6 +131,7 @@ export const OGTRACKS_URLS = {
   SLEEPY: new Array(19).fill(0).map((_, i) => {
     return getMediaUrl(`ogtracks/sleepy/sleepy_${i + 1}.mp3`);
   }),
+  UTUBE: UTUBE.map((song) => getVideoUtubeUrl(song.videoId)),
 };
 
 export const EFFECTS = {

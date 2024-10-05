@@ -13,6 +13,7 @@ import { env } from '@/env.mjs';
 import { lucia } from '@/lib/lucia';
 
 import { authApp, userApp } from './routes';
+import { ytbMusicApp } from './routes/ytb-music';
 import { ContextVariables } from './types';
 
 const app = new OpenAPIHono<{ Variables: ContextVariables }>().basePath('/api');
@@ -85,7 +86,7 @@ app.onError((err, c) => {
   );
 });
 
-export const routes = app.route('/', authApp).route('/', userApp);
+export const routes = app.route('/', authApp).route('/', userApp).route('/ytb-music', ytbMusicApp);
 
 export type AppType = typeof routes;
 

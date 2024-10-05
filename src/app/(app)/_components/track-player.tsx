@@ -3,12 +3,11 @@
 import { pick } from 'ramda';
 import ReactPlayer from 'react-player';
 
-import { playlistsBase } from '@/data/sets';
 import { useStore } from '@/store';
 
 export const TrackPlayer = () => {
-  const { currentTrackId, playlistMod, isMuted, isPlaying, volume, nextTrack, setIsPlaying } =
-    useStore((state) =>
+  const { currentTrackId, isMuted, isPlaying, volume, nextTrack, playlist, playlistMod } = useStore(
+    (state) =>
       pick(
         [
           'currentTrackId',
@@ -18,12 +17,13 @@ export const TrackPlayer = () => {
           'volume',
           'nextTrack',
           'setIsPlaying',
+          'playlist',
         ],
         state,
       ),
-    );
+  );
 
-  const currentTract = playlistsBase[playlistMod][currentTrackId];
+  const currentTract = playlist[currentTrackId];
 
   if (!currentTract) return null;
 
@@ -33,8 +33,11 @@ export const TrackPlayer = () => {
         url={currentTract}
         playing={isPlaying}
         volume={isMuted ? 0 : volume}
+        loop={playlistMod !== 'utube'}
         onEnded={() => {
-          nextTrack();
+          if (playlistMod === 'utube') {
+            nextTrack();
+          }
         }}
       />
     </div>

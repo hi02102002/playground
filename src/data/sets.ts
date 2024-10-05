@@ -236,6 +236,7 @@ export const playlistsBase: { [key in SoundTrackMood]: string[] } = {
   chill: OGTRACKS_URLS.CHILL,
   jazzy: OGTRACKS_URLS.JAZZY,
   sleepy: OGTRACKS_URLS.SLEEPY,
+  utube: OGTRACKS_URLS.UTUBE,
 };
 
 export const playlistsSpotify = {
