@@ -1,6 +1,6 @@
 import { MusicNotesMinus, MusicNotesPlus } from '@phosphor-icons/react';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, PlayIcon } from 'lucide-react';
+import { Loader2, PauseIcon, PlayIcon } from 'lucide-react';
 import Image from 'next/image';
 import { pick } from 'ramda';
 import { useDebounceValue } from 'usehooks-ts';
@@ -12,7 +12,7 @@ import { UTUBE } from '@/data/utube';
 import { useSelector } from '@/hooks/use-selecetor';
 import { client } from '@/server/client';
 import { useStore } from '@/store';
-import { getVideoUtubeUrl } from '@/utils';
+import { getUtubeVideoId, getVideoUtubeUrl } from '@/utils';
 
 export const UtubeInputSearch = () => {
   const [search, setSearch] = useSelector({
@@ -86,32 +86,62 @@ export const UtubeSong = ({
     thumbnail: string;
   };
 }) => {
-  const { addTrack, removeTrack, utubePlaylist, addUtubeTrack, setIsPlaying } = useStore((state) =>
+  const {
+    addTrack,
+    removeTrack,
+    utubePlaylist,
+    addUtubeTrack,
+    currentTrackId,
+    isPlaying,
+    playlist,
+    togglePlay,
+  } = useStore((state) =>
     pick(
-      ['addTrack', 'removeTrack', 'utubePlaylist', 'addUtubeTrack', 'setIsPlaying', 'nextTrack'],
+      [
+        'addTrack',
+        'removeTrack',
+        'utubePlaylist',
+        'addUtubeTrack',
+        'setIsPlaying',
+        'nextTrack',
+        'currentTrackId',
+        'isPlaying',
+        'playlist',
+        'togglePlay',
+      ],
       state,
     ),
   );
 
   const isAdded = utubePlaylist[song.videoId] !== undefined;
 
+  const _isPlaying = getUtubeVideoId(playlist[currentTrackId]) === song.videoId && isPlaying;
+
   return (
     <div className="flex items-center gap-3">
       <div
         className="size-10 relative rounded-md overflow-hidden cursor-pointer group flex-shrink-0"
         onClick={() => {
-          addTrack(getVideoUtubeUrl(song.videoId), true);
-          addUtubeTrack({
-            name: song.name,
-            artist: song.artist,
-            videoId: song.videoId,
-            thumbnail: song.thumbnail,
-          });
+          if (_isPlaying) {
+            togglePlay();
+          } else {
+            addTrack(getVideoUtubeUrl(song.videoId), true);
+            addUtubeTrack({
+              name: song.name,
+              artist: song.artist,
+              videoId: song.videoId,
+              thumbnail: song.thumbnail,
+            });
+          }
         }}
       >
         <Image src={song.thumbnail} alt={song.name} className="object-cover w-full h-full" fill />
         <div className="absolute inset-0 bg-black/40 rounded-md flex items-center justify-center group-hover:opacity-100 opacity-0 transition-all z-10">
-          <PlayIcon size={16} className="text-white" />
+          {_isPlaying ? (
+            <PauseIcon size={16} className="text-white" />
+          ) : (
+            <PlayIcon size={16} className="text-white" />
+          )}
         </div>
       </div>
       <div className="flex flex-col">

@@ -53,6 +53,8 @@ export type PlayerActions = {
   }) => void;
   setSource: (source: 'lofi' | 'utube-music') => void;
   toggleShuffle: () => void;
+  playTrack: (track: string) => void;
+  pauseTrack: (track: string) => void;
 };
 
 const findSuitableTrack = (
@@ -226,6 +228,24 @@ export const createPlayerSlice: StateCreator<Store, [], [], PlayerSlice> = (set)
             ...state.utubePlaylist,
             [videoId]: { name, artist, thumbnail },
           },
+        };
+      });
+    },
+    playTrack(track: string) {
+      set((state) => {
+        return {
+          ...state,
+          currentTrackId: state.playlist.indexOf(track),
+          isPlaying: true,
+        };
+      });
+    },
+    pauseTrack(track: string) {
+      set((state) => {
+        return {
+          ...state,
+          currentTrackId: state.playlist.indexOf(track),
+          isPlaying: false,
         };
       });
     },

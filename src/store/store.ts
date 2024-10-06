@@ -42,14 +42,14 @@ export const createAppStore = (initState: AppState = defaultState) => {
   );
 
   const reset = () =>
-    store.setState({
-      ...defaultState,
+    store.setState((state) => ({
+      ...state,
       isPlaying: false,
-      effects: defaultState.effects.map((effect) => ({
+      effects: state.effects.map((effect) => ({
         ...effect,
         isActive: false,
       })),
-    });
+    }));
 
   resetSet.add(reset);
 
